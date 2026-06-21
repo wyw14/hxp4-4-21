@@ -30,7 +30,7 @@ export class CRTRenderer {
     this.startTime = performance.now();
 
     const gl = canvas.getContext('webgl', {
-      preserveDrawingBuffer: false,
+      preserveDrawingBuffer: true,
       antialias: false
     });
 
@@ -133,6 +133,10 @@ export class CRTRenderer {
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
     this.gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+
+  getCanvas(): HTMLCanvasElement {
+    return this.canvas;
   }
 
   render(params: RendererUniforms): void {

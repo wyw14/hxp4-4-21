@@ -8,6 +8,7 @@ import {
   lerp,
   type SignalMatch
 } from './signal';
+import { ScreenshotPrinter } from './screenshot';
 import type { Signal, SignalsData, TunerState, WeatherOffset } from './types';
 
 class Game {
@@ -15,6 +16,7 @@ class Game {
   private audioManager: AudioManager;
   private knobController: KnobController | null = null;
   private weatherSystem: WeatherSystem | null = null;
+  private screenshotPrinter: ScreenshotPrinter | null = null;
 
   private signals: Signal[] = [];
   private tuner: TunerState = { vhf: 100, uhf: 400, antenna: 180 };
@@ -40,6 +42,7 @@ class Game {
     binaryStream: HTMLElement;
     foundCount: HTMLElement;
     audioToggle: HTMLButtonElement;
+    captureButton: HTMLButtonElement;
   };
 
   constructor() {
@@ -61,7 +64,8 @@ class Game {
       signalDescription: get('signalOverlay').querySelector('.signal-description') as HTMLElement,
       binaryStream: get('signalOverlay').querySelector('.binary-stream') as HTMLElement,
       foundCount: get('foundCount'),
-      audioToggle: get('audioToggle') as HTMLButtonElement
+      audioToggle: get('audioToggle') as HTMLButtonElement,
+      captureButton: get('captureButton') as HTMLButtonElement
     };
   }
 
@@ -117,6 +121,17 @@ class Game {
       this.audioManager.resume();
       const enabled = this.audioManager.toggle();
       this.elements.audioToggle.classList.toggle('active', enabled);
+    });
+
+    this.screenshotPrinter = new ScreenshotPrinter();
+    this.elements.captureButton.addEventListener('click', () => {
+      this.captureScreenshot();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'c' || e.key === 'C') {
+        this.captureScreenshot();
+      }
     });
 
     window.addEventListener('resize', () => {
@@ -192,6 +207,22 @@ class Game {
       }
       this.elements.binaryStream.textContent = display.substring(0, Math.min(len + extra, 80));
     }
+  }
+
+  private captureScreenshot(): void {
+    if (!this.renderer || !this.screenshotPrinter) return;
+
+    const channelName = this.currentMatch.signal?.name || 'NO SIGNAL';
+
+    this.screenshotPrinter.capture({
+      sourceCanvas: this.renderer.getCanvas(),
+      channelName,
+      signalStrength: this.smoothedStrength,
+      vhfValue: this.tuner.vhf,
+      uhfValue: this.tuner.uhf,
+      antennaValue: this.tuner.antenna,
+      timestamp: new Date()
+    });
   }
 
   private animate(): void {

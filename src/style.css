@@ -328,3 +328,105 @@ html, body {
 #foundCount {
   color: #6a5a3a;
 }
+
+.capture-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: linear-gradient(145deg, #1a3a4a, #051520);
+  border: 1px solid #2a4a5a;
+  border-radius: 4px;
+  color: #44aaff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-shadow: 0 0 6px rgba(68, 170, 255, 0.5);
+}
+
+.capture-button:hover {
+  background: linear-gradient(145deg, #2a5a6a, #0a2530);
+  box-shadow: 0 0 12px rgba(68, 170, 255, 0.3);
+}
+
+.capture-button:active {
+  transform: scale(0.98);
+}
+
+.capture-icon {
+  font-size: 14px;
+}
+
+.capture-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.capture-overlay.active {
+  opacity: 1;
+}
+
+.capture-flash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+  animation: captureFlash 0.4s ease-out;
+}
+
+@keyframes captureFlash {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.capture-print-preview {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  pointer-events: none;
+  opacity: 0;
+  animation: printAppear 1.5s ease-out forwards;
+}
+
+@keyframes printAppear {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8) rotate(-2deg);
+    filter: brightness(2);
+  }
+  20% {
+    opacity: 1;
+    filter: brightness(1.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -80%) scale(0.9) rotate(1deg);
+    filter: brightness(1);
+  }
+}
+
+.capture-print-preview img {
+  max-width: 320px;
+  max-height: 240px;
+  border: 8px solid #f5f0e8;
+  box-shadow:
+    0 0 0 1px #d4c8b8,
+    0 10px 40px rgba(0, 0, 0, 0.8),
+    inset 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+}
