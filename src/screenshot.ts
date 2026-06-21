@@ -44,12 +44,12 @@ export class ScreenshotPrinter {
     ctx.fillRect(0, 0, width, height);
 
     this.drawCRTScreen(ctx, data.sourceCanvas, width, height);
-    this.drawOverlay(ctx, data, width, height);
     this.drawScanlines(ctx, width, height);
     this.drawNoise(ctx, width, height);
-    this.drawBorder(ctx, width, height);
     this.drawVignette(ctx, width, height);
     this.drawCRTBurn(ctx, width, height);
+    this.drawOverlay(ctx, data, width, height);
+    this.drawBorder(ctx, width, height);
 
     return outputCanvas.toDataURL('image/png');
   }
@@ -121,85 +121,109 @@ export class ScreenshotPrinter {
     ctx.font = `bold ${fontSize}px 'Courier New', monospace`;
     ctx.textBaseline = 'top';
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
     ctx.fillRect(50, 50, 280, 75);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(50, 50, 280, 75);
 
-    ctx.fillStyle = '#00ff66';
-    ctx.shadowColor = '#00ff66';
-    ctx.shadowBlur = 4;
-
+    ctx.fillStyle = '#00ff88';
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 2;
     ctx.fillText('CH:', 60, 58);
+    ctx.shadowColor = '#000000';
     ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = 3;
     ctx.fillText(data.channelName || 'NO SIGNAL', 100, 58);
 
-    ctx.fillStyle = '#00ff66';
+    ctx.fillStyle = '#00ff88';
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 2;
     ctx.fillText('SIGNAL:', 60, 80);
     ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = 3;
     const signalPercent = Math.round(data.signalStrength * 100);
     ctx.fillText(`${signalPercent.toString().padStart(3, '0')}%`, 130, 80);
 
+    ctx.shadowBlur = 0;
     ctx.fillStyle = signalPercent > 70 ? '#00ff66' : signalPercent > 40 ? '#ffaa00' : '#ff4444';
     ctx.fillRect(180, 82, Math.min(100, signalPercent), 8);
-    ctx.strokeStyle = '#00ff66';
+    ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 1;
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 1;
     ctx.strokeRect(180, 82, 100, 8);
 
     ctx.shadowBlur = 0;
     ctx.restore();
 
     ctx.save();
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
     ctx.fillRect(width - 230, 50, 180, 75);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(width - 230, 50, 180, 75);
 
     ctx.font = `bold ${fontSize}px 'Courier New', monospace`;
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 2;
     ctx.fillStyle = '#44aaff';
-    ctx.shadowColor = '#44aaff';
-    ctx.shadowBlur = 4;
-
     ctx.fillText('VHF:', width - 220, 58);
     ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = 3;
     ctx.fillText(Math.round(data.vhfValue).toString().padStart(3, '0'), width - 170, 58);
 
     ctx.fillStyle = '#ff8844';
-    ctx.shadowColor = '#ff8844';
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 2;
     ctx.fillText('UHF:', width - 220, 80);
     ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = 3;
     ctx.fillText(Math.round(data.uhfValue).toString().padStart(3, '0'), width - 170, 80);
 
     ctx.fillStyle = '#aa44ff';
-    ctx.shadowColor = '#aa44ff';
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 2;
     ctx.fillText('ANT:', width - 110, 58);
     ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = 3;
     ctx.fillText(`${Math.round(data.antennaValue).toString().padStart(3, '0')}°`, width - 60, 58);
 
     ctx.fillStyle = '#ffcc00';
-    ctx.shadowColor = '#ffcc00';
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 2;
     ctx.fillText('MOD:', width - 110, 80);
     ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = 3;
     ctx.fillText('AM', width - 60, 80);
 
     ctx.shadowBlur = 0;
     ctx.restore();
 
     ctx.save();
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.88)';
     ctx.fillRect(50, height - 65, width - 100, 35);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(50, height - 65, width - 100, 35);
 
     ctx.font = `bold 12px 'Courier New', monospace`;
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 2;
     ctx.fillStyle = '#ff4444';
-    ctx.shadowColor = '#ff4444';
-    ctx.shadowBlur = 4;
-
     const timeStr = this.formatTimestamp(data.timestamp);
     ctx.fillText(`REC ${timeStr}`, 65, height - 56);
 
     ctx.fillStyle = '#ff0000';
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 3;
     ctx.beginPath();
     ctx.arc(58, height - 50, 6, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = '#888888';
-    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#cccccc';
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 1;
     ctx.font = `10px 'Courier New', monospace`;
     ctx.fillText('FRAME: CRT-001 • TAPE: B-ROLL • DUB: 2ND GEN', 200, height - 50);
 
@@ -242,7 +266,7 @@ export class ScreenshotPrinter {
   private drawScanlines(ctx: CanvasRenderingContext2D, width: number, height: number): void {
     ctx.save();
     ctx.globalCompositeOperation = 'multiply';
-    ctx.globalAlpha = 0.15;
+    ctx.globalAlpha = 0.08;
 
     for (let y = 0; y < height; y += 2) {
       ctx.fillStyle = 'rgba(0, 0, 0, 1)';
@@ -250,7 +274,7 @@ export class ScreenshotPrinter {
     }
 
     ctx.globalCompositeOperation = 'screen';
-    ctx.globalAlpha = 0.03;
+    ctx.globalAlpha = 0.015;
     ctx.fillStyle = '#ffffff';
     for (let y = 1; y < height; y += 4) {
       ctx.fillRect(0, y, width, 1);
@@ -260,11 +284,12 @@ export class ScreenshotPrinter {
   }
 
   private drawNoise(ctx: CanvasRenderingContext2D, width: number, height: number): void {
-    ctx.save();
-    ctx.globalCompositeOperation = 'overlay';
-    ctx.globalAlpha = 0.08;
+    const noiseCanvas = document.createElement('canvas');
+    noiseCanvas.width = width;
+    noiseCanvas.height = height;
+    const noiseCtx = noiseCanvas.getContext('2d')!;
 
-    const imageData = ctx.createImageData(width, height);
+    const imageData = noiseCtx.createImageData(width, height);
     const data = imageData.data;
 
     for (let i = 0; i < data.length; i += 4) {
@@ -272,16 +297,21 @@ export class ScreenshotPrinter {
       data[i] = noise;
       data[i + 1] = noise;
       data[i + 2] = noise;
-      data[i + 3] = 255;
+      data[i + 3] = 40;
     }
 
-    ctx.putImageData(imageData, 0, 0);
+    noiseCtx.putImageData(imageData, 0, 0);
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'soft-light';
+    ctx.globalAlpha = 0.35;
+    ctx.drawImage(noiseCanvas, 0, 0);
     ctx.restore();
 
     ctx.save();
     ctx.globalCompositeOperation = 'screen';
-    ctx.globalAlpha = 0.02;
-    for (let i = 0; i < 5; i++) {
+    ctx.globalAlpha = 0.015;
+    for (let i = 0; i < 3; i++) {
       const y = Math.random() * height;
       const gradient = ctx.createLinearGradient(0, y, width, y);
       gradient.addColorStop(0, 'transparent');
@@ -289,7 +319,7 @@ export class ScreenshotPrinter {
       gradient.addColorStop(0.7, '#ffffff');
       gradient.addColorStop(1, 'transparent');
       ctx.fillStyle = gradient;
-      ctx.fillRect(0, y, width, 1 + Math.random() * 2);
+      ctx.fillRect(0, y, width, 1 + Math.random());
     }
     ctx.restore();
   }
@@ -344,14 +374,15 @@ export class ScreenshotPrinter {
   private drawVignette(ctx: CanvasRenderingContext2D, width: number, height: number): void {
     ctx.save();
     ctx.globalCompositeOperation = 'multiply';
+    ctx.globalAlpha = 0.5;
 
     const gradient = ctx.createRadialGradient(
       width / 2, height / 2, 0,
       width / 2, height / 2, Math.max(width, height) * 0.7
     );
     gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-    gradient.addColorStop(0.7, 'rgba(200, 200, 200, 1)');
-    gradient.addColorStop(1, 'rgba(80, 80, 80, 1)');
+    gradient.addColorStop(0.7, 'rgba(220, 220, 220, 1)');
+    gradient.addColorStop(1, 'rgba(120, 120, 120, 1)');
 
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
@@ -360,25 +391,22 @@ export class ScreenshotPrinter {
 
   private drawCRTBurn(ctx: CanvasRenderingContext2D, width: number, height: number): void {
     ctx.save();
-    ctx.globalCompositeOperation = 'overlay';
-    ctx.globalAlpha = 0.1;
+    ctx.globalCompositeOperation = 'screen';
+    ctx.globalAlpha = 0.04;
 
     const centerX = width / 2;
     const centerY = height / 2;
 
     for (let i = 0; i < 3; i++) {
-      const offsetX = (Math.random() - 0.5) * 4;
-      const offsetY = (Math.random() - 0.5) * 4;
-
-      ctx.fillStyle = i === 0 ? '#ff0000' : i === 1 ? '#00ff00' : '#0000ff';
-      ctx.globalAlpha = 0.03;
+      const offsetX = (Math.random() - 0.5) * 3;
+      const offsetY = (Math.random() - 0.5) * 3;
 
       const gradient = ctx.createRadialGradient(
         centerX + offsetX, centerY + offsetY, 0,
-        centerX + offsetX, centerY + offsetY, width * 0.6
+        centerX + offsetX, centerY + offsetY, width * 0.5
       );
-      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
-      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      gradient.addColorStop(0, i === 0 ? 'rgba(255, 100, 100, 0.1)' : i === 1 ? 'rgba(100, 255, 100, 0.08)' : 'rgba(100, 100, 255, 0.1)');
+      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, width, height);
     }
